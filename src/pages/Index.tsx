@@ -18,12 +18,12 @@ const Index = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-normal text-foreground" style={{ fontFamily: 'BNazanin' }}>
-          داشبورد سامانه جامع Miner Seeker Azadi
+        <h1 className="text-lg text-foreground" style={{ fontFamily: 'BNazanin', fontWeight: 'normal' }}>
+          داشبورد سامانه جامع شـــبـحِ حَشــبی
         </h1>
         <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-lg">
           <Activity className="w-4 h-4 text-primary" />
-          <span className="text-sm text-primary">سیستم آماده به کار</span>
+          <span className="text-sm text-primary" style={{ fontWeight: 'normal' }}>سیستم آماده به کار</span>
         </div>
       </div>
 
@@ -35,7 +35,7 @@ const Index = () => {
         {/* System Status */}
         <Card className="bg-card/50 backdrop-blur-sm border-border">
           <CardHeader>
-            <CardTitle className="text-lg font-normal flex items-center gap-2" style={{ fontFamily: 'BNazanin' }}>
+            <CardTitle className="text-base flex items-center gap-2" style={{ fontFamily: 'BNazanin', fontWeight: 'normal' }}>
               <Radar className="w-5 h-5 text-primary" />
               وضعیت سیستم‌ها
             </CardTitle>
@@ -44,13 +44,13 @@ const Index = () => {
             {systemStatus.map((system, index) => (
               <div key={index} className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-normal" style={{ fontFamily: 'BNazanin' }}>
+                  <span className="text-sm" style={{ fontFamily: 'BNazanin', fontWeight: 'normal' }}>
                     {system.name}
                   </span>
-                  <span className="text-xs text-muted-foreground">{system.status}</span>
+                  <span className="text-xs text-muted-foreground" style={{ fontWeight: 'normal' }}>{system.status}</span>
                 </div>
                 <Progress value={system.progress} className="h-2" />
-                <div className="text-xs text-muted-foreground text-left">
+                <div className="text-xs text-muted-foreground text-left" style={{ fontWeight: 'normal' }}>
                   {system.progress}%
                 </div>
               </div>
@@ -61,7 +61,7 @@ const Index = () => {
         {/* Quick Actions */}
         <Card className="bg-card/50 backdrop-blur-sm border-border">
           <CardHeader>
-            <CardTitle className="text-lg font-normal flex items-center gap-2" style={{ fontFamily: 'BNazanin' }}>
+            <CardTitle className="text-base flex items-center gap-2" style={{ fontFamily: 'BNazanin', fontWeight: 'normal' }}>
               <Brain className="w-5 h-5 text-primary" />
               عملیات سریع
             </CardTitle>
@@ -75,8 +75,8 @@ const Index = () => {
             ].map((action, index) => (
               <div key={index} className={`p-4 rounded-lg transition-all duration-300 hover:scale-105 cursor-pointer ${action.color}`}>
                 <action.icon className="w-6 h-6 mb-2" />
-                <h3 className="font-normal text-sm mb-1" style={{ fontFamily: 'BNazanin' }}>{action.title}</h3>
-                <p className="text-xs opacity-70">{action.desc}</p>
+                <h3 className="text-sm mb-1" style={{ fontFamily: 'BNazanin', fontWeight: 'normal' }}>{action.title}</h3>
+                <p className="text-xs opacity-70" style={{ fontWeight: 'normal' }}>{action.desc}</p>
               </div>
             ))}
           </CardContent>

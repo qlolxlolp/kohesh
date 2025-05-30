@@ -78,7 +78,7 @@ export function AppSidebar() {
   const isActive = (path: string) => currentPath === path;
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
     isActive 
-      ? "bg-primary/20 text-primary font-medium border-r-2 border-primary" 
+      ? "bg-primary/20 text-primary border-r-2 border-primary" 
       : "hover:bg-muted/50 text-muted-foreground hover:text-foreground";
 
   const groupedItems = Object.entries(categories).map(([key, label]) => ({
@@ -89,7 +89,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar
-      className={`${collapsed ? "w-14" : "w-72"} border-r border-border bg-sidebar`}
+      className={`${collapsed ? "w-14" : "w-36"} border-r border-border bg-sidebar`}
       collapsible="icon"
     >
       <SidebarTrigger className="m-2 self-end text-sidebar-foreground hover:bg-sidebar-accent" />
@@ -100,7 +100,7 @@ export function AppSidebar() {
             key={group.label}
             className="mb-2"
           >
-            <SidebarGroupLabel className="text-sidebar-primary font-medium px-3 py-2">
+            <SidebarGroupLabel className="text-sidebar-primary px-3 py-2" style={{ fontWeight: 'normal' }}>
               {!collapsed && group.label}
             </SidebarGroupLabel>
 
@@ -115,10 +115,11 @@ export function AppSidebar() {
                         className={({ isActive }) => 
                           `flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${getNavCls({ isActive })}`
                         }
+                        style={{ fontWeight: 'normal' }}
                       >
                         <item.icon className="w-5 h-5 flex-shrink-0" />
                         {!collapsed && (
-                          <span className="text-sm font-medium">{item.title}</span>
+                          <span className="text-sm" style={{ fontWeight: 'normal' }}>{item.title}</span>
                         )}
                       </NavLink>
                     </SidebarMenuButton>
