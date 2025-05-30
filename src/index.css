@@ -13,44 +13,44 @@
 
 @layer base {
   :root {
-    --background: 220 15% 5%;
-    --foreground: 220 10% 95%;
+    --background: 236 236 236;
+    --foreground: 33 33 33;
 
-    --card: 220 15% 8%;
-    --card-foreground: 220 10% 95%;
+    --card: 255 255 255;
+    --card-foreground: 33 33 33;
 
-    --popover: 220 15% 8%;
-    --popover-foreground: 220 10% 95%;
+    --popover: 255 255 255;
+    --popover-foreground: 33 33 33;
 
-    --primary: 45 93% 47%;
-    --primary-foreground: 220 15% 5%;
+    --primary: 59 89 152;
+    --primary-foreground: 255 255 255;
 
-    --secondary: 220 10% 15%;
-    --secondary-foreground: 220 10% 85%;
+    --secondary: 212 208 200;
+    --secondary-foreground: 33 33 33;
 
-    --muted: 220 10% 12%;
-    --muted-foreground: 220 5% 65%;
+    --muted: 241 241 241;
+    --muted-foreground: 109 109 109;
 
-    --accent: 142 76% 36%;
-    --accent-foreground: 220 15% 5%;
+    --accent: 0 120 215;
+    --accent-foreground: 255 255 255;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 220 10% 95%;
+    --destructive: 196 43 28;
+    --destructive-foreground: 255 255 255;
 
-    --border: 220 10% 20%;
-    --input: 220 10% 15%;
-    --ring: 45 93% 47%;
+    --border: 172 168 153;
+    --input: 255 255 255;
+    --ring: 0 120 215;
 
-    --radius: 0.5rem;
+    --radius: 2px;
 
-    --sidebar-background: 220 15% 6%;
-    --sidebar-foreground: 220 10% 90%;
-    --sidebar-primary: 45 93% 47%;
-    --sidebar-primary-foreground: 220 15% 5%;
-    --sidebar-accent: 220 10% 12%;
-    --sidebar-accent-foreground: 220 10% 85%;
-    --sidebar-border: 220 10% 18%;
-    --sidebar-ring: 45 93% 47%;
+    --sidebar-background: 212 208 200;
+    --sidebar-foreground: 33 33 33;
+    --sidebar-primary: 59 89 152;
+    --sidebar-primary-foreground: 255 255 255;
+    --sidebar-accent: 255 255 255;
+    --sidebar-accent-foreground: 33 33 33;
+    --sidebar-border: 172 168 153;
+    --sidebar-ring: 0 120 215;
   }
 }
 
@@ -62,27 +62,95 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Vazirmatn', 'BNazanin', sans-serif;
+    font-family: 'BNazanin', 'Vazirmatn', 'Tahoma', sans-serif;
+    font-size: 11px;
   }
 
-  .gradient-bg {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #1a1a2e 100%);
+  .access-button {
+    background: linear-gradient(to bottom, #f0f0f0 0%, #d4d0c8 100%);
+    border: 1px solid #808080;
+    border-top-color: #ffffff;
+    border-left-color: #ffffff;
+    color: #000000;
+    font-family: 'BNazanin', 'Tahoma', sans-serif;
+    font-size: 11px;
+    padding: 2px 8px;
+    cursor: pointer;
   }
 
-  .miner-glow {
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  .access-button:hover {
+    background: linear-gradient(to bottom, #f8f8f8 0%, #dcd8d0 100%);
   }
 
-  .detection-pulse {
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  .access-button:active {
+    background: linear-gradient(to bottom, #d4d0c8 0%, #f0f0f0 100%);
+    border-top-color: #808080;
+    border-left-color: #808080;
+    border-right-color: #ffffff;
+    border-bottom-color: #ffffff;
   }
 
-  @keyframes pulse {
-    0%, 100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: .5;
-    }
+  .access-field {
+    background: #ffffff;
+    border: 2px inset #d4d0c8;
+    color: #000000;
+    font-family: 'BNazanin', 'Tahoma', sans-serif;
+    font-size: 11px;
+    padding: 2px 4px;
+  }
+
+  .access-field:focus {
+    border: 2px inset #0078d4;
+    outline: none;
+  }
+
+  .access-toolbar {
+    background: linear-gradient(to bottom, #f0f0f0 0%, #d4d0c8 100%);
+    border-bottom: 1px solid #808080;
+    padding: 4px;
+  }
+
+  .access-menu {
+    background: #d4d0c8;
+    border: 1px solid #808080;
+    border-top-color: #ffffff;
+    border-left-color: #ffffff;
+  }
+
+  .access-menu-item {
+    padding: 4px 12px;
+    font-family: 'BNazanin', 'Tahoma', sans-serif;
+    font-size: 11px;
+    color: #000000;
+    cursor: pointer;
+  }
+
+  .access-menu-item:hover {
+    background: #316ac5;
+    color: #ffffff;
+  }
+
+  .access-card {
+    background: #ffffff;
+    border: 2px outset #d4d0c8;
+    padding: 8px;
+    margin: 4px;
+  }
+
+  .access-status-bar {
+    background: linear-gradient(to bottom, #f0f0f0 0%, #d4d0c8 100%);
+    border-top: 1px solid #ffffff;
+    border-bottom: 1px solid #808080;
+    padding: 2px 8px;
+    font-size: 10px;
+  }
+
+  .detection-active {
+    animation: blink 1s infinite;
+  }
+
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.5; }
   }
 }
