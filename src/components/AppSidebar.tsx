@@ -70,9 +70,10 @@ const categories = {
 };
 
 export function AppSidebar() {
-  const { collapsed } = useSidebar();
+  const { state } = useSidebar();
   const location = useLocation();
   const currentPath = location.pathname;
+  const collapsed = state === "collapsed";
 
   const isActive = (path: string) => currentPath === path;
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
@@ -89,7 +90,7 @@ export function AppSidebar() {
   return (
     <Sidebar
       className={`${collapsed ? "w-14" : "w-72"} border-r border-border bg-sidebar`}
-      collapsible
+      collapsible="icon"
     >
       <SidebarTrigger className="m-2 self-end text-sidebar-foreground hover:bg-sidebar-accent" />
 
@@ -97,7 +98,6 @@ export function AppSidebar() {
         {groupedItems.map((group) => (
           <SidebarGroup
             key={group.label}
-            open={group.hasActive}
             className="mb-2"
           >
             <SidebarGroupLabel className="text-sidebar-primary font-medium px-3 py-2">
