@@ -13,23 +13,23 @@
 
 @layer base {
   :root {
-    --background: 245 245 245;
-    --foreground: 0 0 0;
+    --background: 240 240 240;
+    --foreground: 33 33 33;
 
     --card: 255 255 255;
-    --card-foreground: 0 0 0;
+    --card-foreground: 33 33 33;
 
     --popover: 255 255 255;
-    --popover-foreground: 0 0 0;
+    --popover-foreground: 33 33 33;
 
     --primary: 59 89 152;
     --primary-foreground: 255 255 255;
 
     --secondary: 212 208 200;
-    --secondary-foreground: 0 0 0;
+    --secondary-foreground: 33 33 33;
 
-    --muted: 240 240 240;
-    --muted-foreground: 0 0 0;
+    --muted: 245 245 245;
+    --muted-foreground: 109 109 109;
 
     --accent: 0 120 215;
     --accent-foreground: 255 255 255;
@@ -44,18 +44,18 @@
     --radius: 2px;
 
     --sidebar-background: 212 208 200;
-    --sidebar-foreground: 0 0 0;
+    --sidebar-foreground: 33 33 33;
     --sidebar-primary: 59 89 152;
     --sidebar-primary-foreground: 255 255 255;
     --sidebar-accent: 255 255 255;
-    --sidebar-accent-foreground: 0 0 0;
+    --sidebar-accent-foreground: 33 33 33;
     --sidebar-border: 0 0 0;
     --sidebar-ring: 0 120 215;
 
     --footer-background: 180 180 180;
     --header-background: 212 208 200;
     --button-background: 245 245 245;
-    --button-text: 0 0 0;
+    --button-text: 33 33 33;
   }
 }
 
@@ -64,7 +64,6 @@
     @apply border-border;
     direction: rtl;
     font-weight: normal !important;
-    color: rgb(0, 0, 0) !important;
   }
 
   body {
@@ -72,8 +71,6 @@
     font-family: 'BNazanin', 'Vazirmatn', 'Tahoma', sans-serif;
     font-size: 11px;
     font-weight: normal;
-    background-color: rgb(245, 245, 245) !important;
-    color: rgb(0, 0, 0) !important;
   }
 
   .access-button {
@@ -81,7 +78,7 @@
     border: 1px solid #000000;
     border-top-color: #ffffff;
     border-left-color: #ffffff;
-    color: rgb(0, 0, 0) !important;
+    color: rgb(var(--button-text));
     font-family: 'BNazanin', 'Tahoma', sans-serif;
     font-size: 11px;
     font-weight: normal;
@@ -106,7 +103,7 @@
   .access-field {
     background: #ffffff;
     border: 1px solid #000000;
-    color: #000000 !important;
+    color: #000000;
     font-family: 'BNazanin', 'Tahoma', sans-serif;
     font-size: 11px;
     font-weight: normal;
@@ -138,13 +135,13 @@
     font-family: 'BNazanin', 'Tahoma', sans-serif;
     font-size: 11px;
     font-weight: normal;
-    color: #000000 !important;
+    color: #000000;
     cursor: pointer;
   }
 
   .access-menu-item:hover {
     background: #316ac5;
-    color: #ffffff !important;
+    color: #ffffff;
   }
 
   .access-card {
@@ -175,113 +172,13 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-weight: normal !important;
-    color: rgb(0, 0, 0) !important;
   }
 
   .company-info {
     font-family: 'BNazanin', 'Tahoma', sans-serif;
     font-size: 9px;
-    color: #000 !important;
+    color: #333;
     line-height: 1.2;
     font-weight: normal;
-  }
-
-  /* Commercial System Enhancements */
-  .commercial-badge {
-    background: linear-gradient(45deg, #FFD700, #FFA500);
-    color: #000 !important;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-size: 8px;
-    font-weight: bold;
-    border: 1px solid #000;
-  }
-
-  .status-indicator {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    margin-left: 4px;
-  }
-
-  .status-active {
-    background-color: #00FF00;
-    box-shadow: 0 0 4px #00FF00;
-  }
-
-  .status-inactive {
-    background-color: #FF0000;
-    box-shadow: 0 0 4px #FF0000;
-  }
-
-  .professional-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 16px;
-    padding: 16px;
-  }
-
-  .equipment-panel {
-    background: #ffffff;
-    border: 2px solid #000000;
-    border-top-color: #ffffff;
-    border-left-color: #ffffff;
-    padding: 12px;
-    margin: 8px;
-    box-shadow: 2px 2px 6px rgba(0,0,0,0.4);
-  }
-
-  .data-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #ffffff;
-    border: 1px solid #000000;
-  }
-
-  .data-table th,
-  .data-table td {
-    border: 1px solid #000000;
-    padding: 4px 8px;
-    text-align: right;
-    font-family: 'BNazanin', 'Tahoma', sans-serif;
-    font-size: 11px;
-    color: #000000 !important;
-  }
-
-  .data-table th {
-    background: #d4d0c8;
-    font-weight: normal;
-  }
-
-  .alert-critical {
-    background: #FF6B6B;
-    color: #000 !important;
-    border: 2px solid #000;
-    padding: 8px;
-    margin: 4px;
-    animation: pulse 2s infinite;
-  }
-
-  .alert-warning {
-    background: #FFE66D;
-    color: #000 !important;
-    border: 2px solid #000;
-    padding: 8px;
-    margin: 4px;
-  }
-
-  .alert-info {
-    background: #4ECDC4;
-    color: #000 !important;
-    border: 2px solid #000;
-    padding: 8px;
-    margin: 4px;
-  }
-
-  @keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.7; }
-    100% { opacity: 1; }
   }
 }
