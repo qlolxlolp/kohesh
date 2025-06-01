@@ -1,16 +1,19 @@
+
 import React from 'react';
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Navigation } from "@/components/Navigation";
 import { Search, Settings } from 'lucide-react';
+
 interface LayoutProps {
   children: React.ReactNode;
 }
+
 const Layout: React.FC<LayoutProps> = ({
   children
 }) => {
   return <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background">
+      <div className="min-h-screen flex w-full" style={{ backgroundColor: '#ebe0d2ed' }}>
         <AppSidebar />
         
         <div className="flex-1 flex flex-col">
@@ -44,8 +47,8 @@ const Layout: React.FC<LayoutProps> = ({
           </header>
 
           {/* Main Content */}
-          <main className="flex-1 p-2 bg-muted">
-            <div className="access-card min-h-full bg-[#ebe0d2]/[0.93]">
+          <main className="flex-1 p-2" style={{ backgroundColor: '#ebe0d2ed' }}>
+            <div className="access-card min-h-full" style={{ backgroundColor: '#ebe0d2ed' }}>
               {children}
             </div>
           </main>
@@ -55,37 +58,46 @@ const Layout: React.FC<LayoutProps> = ({
             <div className="flex flex-col gap-1">
               <div className="flex items-center justify-between">
                 <span style={{
-                color: 'black'
+                color: 'black',
+                fontFamily: 'BNazanin'
               }}>آماده</span>
                 <span style={{
-                color: 'black'
+                color: 'black',
+                fontFamily: 'BNazanin'
               }}>سامانه فعال</span>
               </div>
               <div className="company-info text-center border-t border-black pt-1">
                 <div className="mb-1" style={{
-                color: 'black'
+                color: 'black',
+                fontFamily: 'BNazanin'
               }}>
                   © کلیه حقوق محفوظ است - طراحی، توسعه و اجرا: عرفان رجبی
                 </div>
                 <div className="flex flex-col lg:flex-row justify-center items-center gap-2 text-xs">
                   <span style={{
-                  color: 'black'
+                  color: 'black',
+                  fontFamily: 'BNazanin'
                 }}>شرکت تلاشگر ایلام (سهامی خاص)</span>
                   <span style={{
-                  color: 'black'
+                  color: 'black',
+                  fontFamily: 'BNazanin'
                 }}>|</span>
                   <span style={{
-                  color: 'black'
+                  color: 'black',
+                  fontFamily: 'BNazanin'
                 }}>اسفند 1402، بهار 1404</span>
                   <span style={{
-                  color: 'black'
+                  color: 'black',
+                  fontFamily: 'BNazanin'
                 }}>|</span>
                   <span dir="ltr" style={{
-                  color: 'black'
+                  color: 'black',
+                  fontFamily: 'BNazanin'
                 }}>Erfanrajabee@gmail.com</span>
                 </div>
                 <div className="text-xs mt-1" style={{
-                color: 'black'
+                color: 'black',
+                fontFamily: 'BNazanin'
               }}>
                   آدرس دفتر: ایلام - خیابان سعدی شمالی - مجتمع اداری تجاری رجبی - طبقه آخر
                 </div>
@@ -96,4 +108,5 @@ const Layout: React.FC<LayoutProps> = ({
       </div>
     </SidebarProvider>;
 };
+
 export default Layout;

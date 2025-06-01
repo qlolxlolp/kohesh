@@ -13,7 +13,7 @@
 
 @layer base {
   :root {
-    --background: 240 240 240;
+    --background: #ebe0d2ed;
     --foreground: 0 0 0;
 
     --card: 255 255 255;
@@ -28,7 +28,7 @@
     --secondary: 212 208 200;
     --secondary-foreground: 0 0 0;
 
-    --muted: 245 245 245;
+    --muted: #ebe0d2ed;
     --muted-foreground: 109 109 109;
 
     --accent: 0 120 215;
@@ -67,11 +67,20 @@
   }
 
   body {
-    @apply bg-background text-foreground;
-    font-family: 'BNazanin', 'Vazirmatn', 'Tahoma', sans-serif;
+    background-color: #ebe0d2ed !important;
+    color: black !important;
+    font-family: 'BNazanin', 'Vazirmatn', 'Tahoma', sans-serif !important;
     font-size: 11px;
     font-weight: normal;
-    color: black;
+  }
+
+  html {
+    background-color: #ebe0d2ed !important;
+  }
+
+  #root {
+    background-color: #ebe0d2ed !important;
+    min-height: 100vh;
   }
 
   .access-button {
@@ -191,6 +200,7 @@
   h1, h2, h3, h4, h5, h6 {
     font-weight: normal !important;
     color: black !important;
+    font-family: 'BNazanin', 'Vazirmatn', 'Tahoma', sans-serif !important;
   }
 
   .text-primary {
@@ -199,5 +209,10 @@
 
   .text-muted-foreground {
     color: #555 !important;
+  }
+
+  /* Global font application */
+  *, *::before, *::after {
+    font-family: 'BNazanin', 'Vazirmatn', 'Tahoma', sans-serif !important;
   }
 }
