@@ -14,19 +14,19 @@
 @layer base {
   :root {
     --background: 240 240 240;
-    --foreground: 33 33 33;
+    --foreground: 0 0 0;
 
     --card: 255 255 255;
-    --card-foreground: 33 33 33;
+    --card-foreground: 0 0 0;
 
     --popover: 255 255 255;
-    --popover-foreground: 33 33 33;
+    --popover-foreground: 0 0 0;
 
     --primary: 59 89 152;
     --primary-foreground: 255 255 255;
 
     --secondary: 212 208 200;
-    --secondary-foreground: 33 33 33;
+    --secondary-foreground: 0 0 0;
 
     --muted: 245 245 245;
     --muted-foreground: 109 109 109;
@@ -44,18 +44,18 @@
     --radius: 2px;
 
     --sidebar-background: 212 208 200;
-    --sidebar-foreground: 33 33 33;
+    --sidebar-foreground: 0 0 0;
     --sidebar-primary: 59 89 152;
     --sidebar-primary-foreground: 255 255 255;
     --sidebar-accent: 255 255 255;
-    --sidebar-accent-foreground: 33 33 33;
+    --sidebar-accent-foreground: 0 0 0;
     --sidebar-border: 0 0 0;
     --sidebar-ring: 0 120 215;
 
     --footer-background: 180 180 180;
     --header-background: 212 208 200;
     --button-background: 245 245 245;
-    --button-text: 33 33 33;
+    --button-text: 0 0 0;
   }
 }
 
@@ -71,6 +71,7 @@
     font-family: 'BNazanin', 'Vazirmatn', 'Tahoma', sans-serif;
     font-size: 11px;
     font-weight: normal;
+    color: black;
   }
 
   .access-button {
@@ -78,13 +79,14 @@
     border: 1px solid #000000;
     border-top-color: #ffffff;
     border-left-color: #ffffff;
-    color: rgb(var(--button-text));
+    color: black;
     font-family: 'BNazanin', 'Tahoma', sans-serif;
     font-size: 11px;
     font-weight: normal;
-    padding: 2px 8px;
+    padding: 4px 12px;
     cursor: pointer;
-    box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    min-height: 24px;
   }
 
   .access-button:hover {
@@ -100,10 +102,47 @@
     box-shadow: inset 1px 1px 2px rgba(0,0,0,0.3);
   }
 
+  .dashboard-card {
+    background: linear-gradient(to bottom, #f8f8f8 0%, #e8e8e8 100%);
+    border: 2px solid #000000;
+    border-top-color: #ffffff;
+    border-left-color: #ffffff;
+    color: black;
+    font-family: 'BNazanin', 'Tahoma', sans-serif;
+    font-size: 12px;
+    font-weight: normal;
+    padding: 16px;
+    cursor: pointer;
+    box-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+    transition: all 0.2s ease;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .dashboard-card:hover {
+    background: linear-gradient(to bottom, #ffffff 0%, #f0f0f0 100%);
+    transform: translateY(-2px);
+    box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
+  }
+
+  .dashboard-card:active {
+    background: linear-gradient(to bottom, #e8e8e8 0%, #f8f8f8 100%);
+    border-top-color: #000000;
+    border-left-color: #000000;
+    border-right-color: #ffffff;
+    border-bottom-color: #ffffff;
+    box-shadow: inset 2px 2px 4px rgba(0,0,0,0.3);
+    transform: translateY(0);
+  }
+
   .access-field {
     background: #ffffff;
     border: 1px solid #000000;
-    color: #000000;
+    color: black;
     font-family: 'BNazanin', 'Tahoma', sans-serif;
     font-size: 11px;
     font-weight: normal;
@@ -122,34 +161,13 @@
     padding: 4px;
   }
 
-  .access-menu {
-    background: #d4d0c8;
-    border: 1px solid #000000;
-    border-top-color: #ffffff;
-    border-left-color: #ffffff;
-    box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-  }
-
-  .access-menu-item {
-    padding: 4px 12px;
-    font-family: 'BNazanin', 'Tahoma', sans-serif;
-    font-size: 11px;
-    font-weight: normal;
-    color: #000000;
-    cursor: pointer;
-  }
-
-  .access-menu-item:hover {
-    background: #316ac5;
-    color: #ffffff;
-  }
-
   .access-card {
     background: #ffffff;
     border: 1px solid #000000;
     padding: 8px;
     margin: 4px;
     box-shadow: inset 1px 1px 2px rgba(0,0,0,0.1), 2px 2px 4px rgba(0,0,0,0.3);
+    color: black;
   }
 
   .access-status-bar {
@@ -159,26 +177,27 @@
     padding: 2px 8px;
     font-size: 10px;
     font-weight: normal;
-  }
-
-  .detection-active {
-    animation: blink 1s infinite;
-  }
-
-  @keyframes blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0.5; }
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    font-weight: normal !important;
+    color: black;
   }
 
   .company-info {
     font-family: 'BNazanin', 'Tahoma', sans-serif;
     font-size: 9px;
-    color: #333;
+    color: black;
     line-height: 1.2;
     font-weight: normal;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: normal !important;
+    color: black !important;
+  }
+
+  .text-primary {
+    color: black !important;
+  }
+
+  .text-muted-foreground {
+    color: #555 !important;
   }
 }

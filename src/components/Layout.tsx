@@ -24,7 +24,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <div className="w-6 h-6 bg-primary flex items-center justify-center" style={{ border: '1px solid #000' }}>
                   <Search className="w-4 h-4 text-white" />
                 </div>
-                <span className="text-sm text-foreground" style={{ fontFamily: 'BNazanin', fontWeight: 'normal' }}>
+                <span className="text-sm" style={{ 
+                  fontFamily: 'BNazanin', 
+                  fontWeight: 'normal',
+                  color: 'black'
+                }}>
                   شـــبـحِ حَشــبی - سامانه شناسایی پیشرفته
                 </span>
               </div>
@@ -33,7 +37,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <Navigation />
             
             <div className="flex items-center gap-2">
-              <Settings className="w-4 h-4 text-muted-foreground" />
+              <Settings className="w-4 h-4" style={{ color: 'black' }} />
             </div>
           </header>
 
@@ -48,21 +52,21 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <footer className="access-status-bar">
             <div className="flex flex-col gap-1">
               <div className="flex items-center justify-between">
-                <span>آماده</span>
-                <span>سامانه فعال</span>
+                <span style={{ color: 'black' }}>آماده</span>
+                <span style={{ color: 'black' }}>سامانه فعال</span>
               </div>
               <div className="company-info text-center border-t border-black pt-1">
-                <div className="mb-1">
+                <div className="mb-1" style={{ color: 'black' }}>
                   © کلیه حقوق محفوظ است - طراحی، توسعه و اجرا: عرفان رجبی
                 </div>
                 <div className="flex flex-col lg:flex-row justify-center items-center gap-2 text-xs">
-                  <span>شرکت تلاشگر ایلام (سهامی خاص)</span>
-                  <span>|</span>
-                  <span>اسفند 1402، بهار 1404</span>
-                  <span>|</span>
-                  <span dir="ltr">Erfanrajabee@gmail.com</span>
+                  <span style={{ color: 'black' }}>شرکت تلاشگر ایلام (سهامی خاص)</span>
+                  <span style={{ color: 'black' }}>|</span>
+                  <span style={{ color: 'black' }}>اسفند 1402، بهار 1404</span>
+                  <span style={{ color: 'black' }}>|</span>
+                  <span dir="ltr" style={{ color: 'black' }}>Erfanrajabee@gmail.com</span>
                 </div>
-                <div className="text-xs mt-1">
+                <div className="text-xs mt-1" style={{ color: 'black' }}>
                   آدرس دفتر: ایلام - خیابان سعدی شمالی - مجتمع اداری تجاری رجبی - طبقه آخر
                 </div>
               </div>
