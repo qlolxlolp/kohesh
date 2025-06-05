@@ -76,10 +76,6 @@ export function AppSidebar() {
   const collapsed = state === "collapsed";
 
   const isActive = (path: string) => currentPath === path;
-  const getNavCls = ({ isActive }: { isActive: boolean }) =>
-    isActive 
-      ? "bg-primary/20 text-primary border-r-2 border-primary" 
-      : "hover:bg-muted/50 text-muted-foreground hover:text-foreground";
 
   const groupedItems = Object.entries(categories).map(([key, label]) => ({
     label,
@@ -89,18 +85,22 @@ export function AppSidebar() {
 
   return (
     <Sidebar
-      className={`${collapsed ? "w-14" : "w-36"} border-r border-border bg-sidebar`}
+      className={`${collapsed ? "w-16" : "w-64"} border-r-2 border-[#8b4513]`}
+      style={{ background: 'linear-gradient(135deg, #deb887 0%, #cd853f 100%)' }}
       collapsible="icon"
     >
-      <SidebarTrigger className="m-2 self-end text-sidebar-foreground hover:bg-sidebar-accent" />
+      <SidebarTrigger className="m-3 access-button" />
 
-      <SidebarContent className="px-2">
+      <SidebarContent className="px-3">
         {groupedItems.map((group) => (
           <SidebarGroup
             key={group.label}
-            className="mb-2"
+            className="mb-4"
           >
-            <SidebarGroupLabel className="text-sidebar-primary px-3 py-2" style={{ fontWeight: 'normal' }}>
+            <SidebarGroupLabel 
+              className="text-black px-2 py-3 font-bold text-lg"
+              style={{ fontFamily: 'Amiri Quran', fontWeight: '700' }}
+            >
               {!collapsed && group.label}
             </SidebarGroupLabel>
 
@@ -108,18 +108,19 @@ export function AppSidebar() {
               <SidebarMenu>
                 {group.items.map((item) => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild className="mb-1">
+                    <SidebarMenuButton asChild>
                       <NavLink 
                         to={item.url} 
                         end 
-                        className={({ isActive }) => 
-                          `flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${getNavCls({ isActive })}`
+                        className={({ isActive: linkActive }) => 
+                          `sidebar-button ${linkActive ? 'active' : ''}`
                         }
-                        style={{ fontWeight: 'normal' }}
                       >
-                        <item.icon className="w-5 h-5 flex-shrink-0" />
+                        <item.icon className="w-6 h-6 flex-shrink-0" />
                         {!collapsed && (
-                          <span className="text-sm" style={{ fontWeight: 'normal' }}>{item.title}</span>
+                          <span className="text-base font-bold overflow-visible whitespace-normal leading-tight">
+                            {item.title}
+                          </span>
                         )}
                       </NavLink>
                     </SidebarMenuButton>

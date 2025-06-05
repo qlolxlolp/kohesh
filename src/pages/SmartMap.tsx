@@ -1,11 +1,10 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Map, MapPin, Navigation } from 'lucide-react';
+import { Label } from "@/components/ui/label";
+import { Map, MapPin, Navigation, Zap, Thermometer, Wifi } from 'lucide-react';
 
 interface MinerLocation {
   id: string;
@@ -16,12 +15,22 @@ interface MinerLocation {
   status: 'active' | 'inactive' | 'suspected';
   hashRate: string;
   confidence: number;
+  temperature: number;
+  signal: number;
+}
+
+declare global {
+  interface Window {
+    google: any;
+    initMap: () => void;
+  }
 }
 
 const SmartMap = () => {
-  const [mapboxToken, setMapboxToken] = useState('');
-  const [showTokenInput, setShowTokenInput] = useState(true);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [map, setMap] = useState<any>(null);
   const [selectedMiner, setSelectedMiner] = useState<MinerLocation | null>(null);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
   
   const minerLocations: MinerLocation[] = [
     {
@@ -32,7 +41,9 @@ const SmartMap = () => {
       address: 'تهران، پونک، خیابان آزادی',
       status: 'active',
       hashRate: '110 TH/s',
-      confidence: 94
+      confidence: 94,
+      temperature: 65,
+      signal: 85
     },
     {
       id: '2', 
@@ -42,7 +53,9 @@ const SmartMap = () => {
       address: 'تهران، ونک، خیابان ولیعصر',
       status: 'suspected',
       hashRate: '85 TH/s',
-      confidence: 67
+      confidence: 67,
+      temperature: 72,
+      signal: 78
     },
     {
       id: '3',
@@ -52,92 +65,132 @@ const SmartMap = () => {
       address: 'تهران، نارمک، خیابان دماوند',
       status: 'active',
       hashRate: '88 TH/s',
-      confidence: 91
+      confidence: 91,
+      temperature: 58,
+      signal: 92
     }
   ];
 
-  const connectMapbox = () => {
-    if (mapboxToken.trim()) {
-      setShowTokenInput(false);
-      console.log('Mapbox connected with token:', mapboxToken);
+  useEffect(() => {
+    const loadGoogleMaps = () => {
+      if (window.google) {
+        initializeMap();
+        return;
+      }
+
+      window.initMap = initializeMap;
+      
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dOWTgHz-5kbGdI&callback=initMap&libraries=geometry,places`;
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    };
+
+    const initializeMap = () => {
+      if (!mapRef.current || !window.google) return;
+
+      const googleMap = new window.google.maps.Map(mapRef.current, {
+        zoom: 11,
+        center: { lat: 35.6892, lng: 51.3890 },
+        mapTypeId: window.google.maps.MapTypeId.ROADMAP,
+        styles: [
+          {
+            featureType: "all",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#000000" }]
+          }
+        ]
+      });
+
+      minerLocations.forEach((miner) => {
+        const marker = new window.google.maps.Marker({
+          position: { lat: miner.lat, lng: miner.lng },
+          map: googleMap,
+          title: miner.name,
+          icon: {
+            url: miner.status === 'active' 
+              ? 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iOCIgZmlsbD0iIzAwRkYwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+'
+              : miner.status === 'suspected'
+              ? 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iOCIgZmlsbD0iI0ZGRkYwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+'
+              : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iOCIgZmlsbD0iI0ZGMDAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+',
+            scaledSize: new window.google.maps.Size(32, 32)
+          }
+        });
+
+        const infoWindow = new window.google.maps.InfoWindow({
+          content: `
+            <div style="font-family: 'Amiri Quran', serif; direction: rtl; color: black;">
+              <h3 style="font-weight: bold; margin: 0 0 8px 0;">${miner.name}</h3>
+              <p style="margin: 4px 0;"><strong>آدرس:</strong> ${miner.address}</p>
+              <p style="margin: 4px 0;"><strong>نرخ هش:</strong> ${miner.hashRate}</p>
+              <p style="margin: 4px 0;"><strong>اطمینان:</strong> ${miner.confidence}%</p>
+              <p style="margin: 4px 0;"><strong>دما:</strong> ${miner.temperature}°C</p>
+              <p style="margin: 4px 0;"><strong>سیگنال:</strong> ${miner.signal}%</p>
+            </div>
+          `
+        });
+
+        marker.addListener('click', () => {
+          infoWindow.open(googleMap, marker);
+          setSelectedMiner(miner);
+        });
+      });
+
+      setMap(googleMap);
+      setIsMapLoaded(true);
+    };
+
+    loadGoogleMaps();
+  }, []);
+
+  const routeToLocation = (miner: MinerLocation) => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const origin = `${position.coords.latitude},${position.coords.longitude}`;
+        const destination = `${miner.lat},${miner.lng}`;
+        const url = `https://www.google.com/maps/dir/${origin}/${destination}`;
+        window.open(url, '_blank');
+      });
+    } else {
+      const destination = `${miner.lat},${miner.lng}`;
+      const url = `https://www.google.com/maps/search/${destination}`;
+      window.open(url, '_blank');
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6" style={{ background: 'linear-gradient(135deg, #f5f5dc 0%, #deb887 100%)', minHeight: '100vh' }}>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground mb-2">
-          نقشه هوشمند
+        <h1 className="text-4xl font-bold text-black mb-4" style={{ fontFamily: 'Amiri Quran' }}>
+          نقشه هوشمند تشخیص ماینرها
         </h1>
-        <p className="text-muted-foreground">
-          نمایش مکان دستگاه‌های شناسایی شده روی نقشه، مسیریابی و تحلیل جغرافیایی
+        <p className="text-black text-lg" style={{ fontFamily: 'Amiri Quran' }}>
+          نمایش مکان دستگاه‌های شناسایی شده روی نقشه واقعی گوگل، مسیریابی و تحلیل جغرافیایی
         </p>
       </div>
 
-      {/* Mapbox Token Input */}
-      {showTokenInput && (
-        <Card className="bg-amber-500/10 border-amber-500/20">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-amber-700 dark:text-amber-300">
-              <Map className="w-5 h-5" />
-              اتصال به Mapbox
-            </CardTitle>
-            <CardDescription className="text-amber-600 dark:text-amber-400">
-              برای نمایش نقشه، لطفاً کلید API مپ‌باکس خود را وارد کنید
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="mapbox-token">Mapbox Public Token</Label>
-              <Input
-                id="mapbox-token"
-                value={mapboxToken}
-                onChange={(e) => setMapboxToken(e.target.value)}
-                placeholder="pk.eyJ1IjoieW91ciB1c2VybmFtZSIsImEiOiJjbGV..."
-                type="password"
-              />
-            </div>
-            <Button 
-              onClick={connectMapbox}
-              disabled={!mapboxToken.trim()}
-              className="bg-amber-600 hover:bg-amber-700 text-white"
-            >
-              اتصال به نقشه
-            </Button>
-            <p className="text-sm text-muted-foreground">
-              برای دریافت کلید API به 
-              <a href="https://mapbox.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline mx-1">
-                mapbox.com
-              </a>
-              مراجعه کنید
-            </p>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Map Container */}
-      <Card className="bg-card/50 backdrop-blur-sm border-border">
+      {/* Google Map Container */}
+      <Card className="access-card map-container">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MapPin className="w-5 h-5 text-primary" />
-            نقشه تعاملی کشف‌ها
+          <CardTitle className="flex items-center gap-3 text-black text-xl" style={{ fontFamily: 'Amiri Quran' }}>
+            <MapPin className="w-6 h-6 text-black" />
+            نقشه تعاملی Google Maps
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="w-full h-96 bg-muted/20 rounded-lg flex items-center justify-center border-2 border-dashed border-border">
-            {showTokenInput ? (
-              <div className="text-center space-y-2">
-                <Map className="w-12 h-12 text-muted-foreground mx-auto" />
-                <p className="text-muted-foreground">لطفاً ابتدا کلید API مپ‌باکس را وارد کنید</p>
-              </div>
-            ) : (
-              <div className="text-center space-y-2">
-                <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg flex items-center justify-center">
-                  <div className="text-center">
-                    <Map className="w-16 h-16 text-primary mx-auto mb-2" />
-                    <p className="text-lg font-medium text-foreground">نقشه Mapbox</p>
-                    <p className="text-sm text-muted-foreground">در حال بارگذاری...</p>
-                  </div>
+          <div 
+            ref={mapRef}
+            className="w-full h-96 rounded-lg border-2 border-[#8b4513]"
+            style={{ background: isMapLoaded ? 'transparent' : '#f5f5dc' }}
+          >
+            {!isMapLoaded && (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <Map className="w-16 h-16 text-black mx-auto mb-4" />
+                  <p className="text-black text-lg font-bold" style={{ fontFamily: 'Amiri Quran' }}>
+                    در حال بارگذاری نقشه Google Maps...
+                  </p>
                 </div>
               </div>
             )}
@@ -146,14 +199,14 @@ const SmartMap = () => {
       </Card>
 
       {/* Detected Locations List */}
-      <Card className="bg-card/50 backdrop-blur-sm border-border">
+      <Card className="access-card">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Navigation className="w-5 h-5 text-accent" />
-            مکان‌های شناسایی شده
+          <CardTitle className="flex items-center gap-3 text-black text-xl" style={{ fontFamily: 'Amiri Quran' }}>
+            <Navigation className="w-6 h-6 text-black" />
+            فهرست دستگاه‌های کشف شده
           </CardTitle>
-          <CardDescription>
-            فهرست دستگاه‌های کشف شده با جزئیات مکان و وضعیت
+          <CardDescription className="text-black" style={{ fontFamily: 'Amiri Quran' }}>
+            جزئیات کامل دستگاه‌های شناسایی شده با اطلاعات دقیق مکان و عملکرد
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -161,46 +214,75 @@ const SmartMap = () => {
             {minerLocations.map((miner) => (
               <div 
                 key={miner.id}
-                className={`p-4 rounded-lg border cursor-pointer transition-all duration-200 ${
+                className={`p-6 rounded-lg border-2 border-[#8b4513] cursor-pointer transition-all duration-300 ${
                   selectedMiner?.id === miner.id 
-                    ? 'bg-primary/10 border-primary' 
-                    : 'bg-secondary/30 border-border hover:bg-secondary/50'
+                    ? 'bg-gradient-to-r from-[#daa520] to-[#b8860b] shadow-lg transform scale-105' 
+                    : 'bg-gradient-to-r from-[#f5f5dc] to-[#deb887] hover:shadow-md hover:transform hover:scale-102'
                 }`}
                 onClick={() => setSelectedMiner(miner)}
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className={`w-4 h-4 rounded-full ${
-                      miner.status === 'active' ? 'bg-accent detection-pulse' :
-                      miner.status === 'suspected' ? 'bg-primary' : 'bg-muted-foreground'
+                  <div className="flex items-center gap-6">
+                    <div className={`w-6 h-6 rounded-full border-2 border-black ${
+                      miner.status === 'active' ? 'bg-green-500' :
+                      miner.status === 'suspected' ? 'bg-yellow-500' : 'bg-red-500'
                     }`}></div>
                     
                     <div>
-                      <h4 className="font-medium text-foreground">{miner.name}</h4>
-                      <p className="text-sm text-muted-foreground">{miner.address}</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-primary font-medium">{miner.hashRate}</span>
-                        <span className="text-xs text-muted-foreground">
-                          • اطمینان: {miner.confidence}%
-                        </span>
+                      <h4 className="font-bold text-xl text-black mb-2" style={{ fontFamily: 'Amiri Quran' }}>
+                        {miner.name}
+                      </h4>
+                      <p className="text-black text-base mb-2" style={{ fontFamily: 'Amiri Quran' }}>
+                        {miner.address}
+                      </p>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3">
+                        <div className="flex items-center gap-2">
+                          <Zap className="w-4 h-4 text-blue-600" />
+                          <span className="text-black font-bold" style={{ fontFamily: 'Amiri Quran' }}>
+                            {miner.hashRate}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Thermometer className="w-4 h-4 text-red-600" />
+                          <span className="text-black font-bold" style={{ fontFamily: 'Amiri Quran' }}>
+                            {miner.temperature}°C
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Wifi className="w-4 h-4 text-green-600" />
+                          <span className="text-black font-bold" style={{ fontFamily: 'Amiri Quran' }}>
+                            {miner.signal}%
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-black font-bold" style={{ fontFamily: 'Amiri Quran' }}>
+                            اطمینان: {miner.confidence}%
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <Badge 
-                      variant={miner.status === 'active' ? 'default' : 'outline'}
-                      className={
-                        miner.status === 'active' ? 'bg-accent text-accent-foreground' :
-                        miner.status === 'suspected' ? 'border-primary text-primary' :
-                        'border-muted-foreground text-muted-foreground'
-                      }
+                      className={`px-4 py-2 text-base font-bold border-2 ${
+                        miner.status === 'active' ? 'bg-green-500 border-green-700 text-white' :
+                        miner.status === 'suspected' ? 'bg-yellow-500 border-yellow-700 text-black' :
+                        'bg-red-500 border-red-700 text-white'
+                      }`}
+                      style={{ fontFamily: 'Amiri Quran' }}
                     >
                       {miner.status === 'active' ? 'فعال' :
                        miner.status === 'suspected' ? 'مشکوک' : 'غیرفعال'}
                     </Badge>
                     
-                    <Button size="sm" variant="outline">
+                    <Button 
+                      className="access-button text-base"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        routeToLocation(miner);
+                      }}
+                    >
                       مسیریابی
                     </Button>
                   </div>
@@ -213,43 +295,69 @@ const SmartMap = () => {
 
       {/* Location Details */}
       {selectedMiner && (
-        <Card className="bg-card/50 backdrop-blur-sm border-border">
+        <Card className="access-card">
           <CardHeader>
-            <CardTitle>جزئیات مکان انتخاب شده</CardTitle>
+            <CardTitle className="text-black text-xl" style={{ fontFamily: 'Amiri Quran' }}>
+              جزئیات کامل مکان انتخاب شده
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-4">
                 <div>
-                  <Label className="text-sm font-medium text-muted-foreground">نام دستگاه</Label>
-                  <p className="text-foreground">{selectedMiner.name}</p>
+                  <Label className="text-base font-bold text-black" style={{ fontFamily: 'Amiri Quran' }}>
+                    نام دستگاه
+                  </Label>
+                  <p className="text-black text-lg" style={{ fontFamily: 'Amiri Quran' }}>
+                    {selectedMiner.name}
+                  </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-muted-foreground">آدرس</Label>
-                  <p className="text-foreground">{selectedMiner.address}</p>
+                  <Label className="text-base font-bold text-black" style={{ fontFamily: 'Amiri Quran' }}>
+                    آدرس کامل
+                  </Label>
+                  <p className="text-black text-lg" style={{ fontFamily: 'Amiri Quran' }}>
+                    {selectedMiner.address}
+                  </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-muted-foreground">مختصات</Label>
-                  <p className="text-foreground">
+                  <Label className="text-base font-bold text-black" style={{ fontFamily: 'Amiri Quran' }}>
+                    مختصات جغرافیایی
+                  </Label>
+                  <p className="text-black text-lg font-mono">
                     {selectedMiner.lat.toFixed(6)}, {selectedMiner.lng.toFixed(6)}
                   </p>
                 </div>
               </div>
               
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <div>
-                  <Label className="text-sm font-medium text-muted-foreground">نرخ هش</Label>
-                  <p className="text-primary font-medium">{selectedMiner.hashRate}</p>
+                  <Label className="text-base font-bold text-black" style={{ fontFamily: 'Amiri Quran' }}>
+                    نرخ هش
+                  </Label>
+                  <p className="text-black font-bold text-lg" style={{ fontFamily: 'Amiri Quran' }}>
+                    {selectedMiner.hashRate}
+                  </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-muted-foreground">درصد اطمینان</Label>
-                  <p className="text-accent font-medium">{selectedMiner.confidence}%</p>
+                  <Label className="text-base font-bold text-black" style={{ fontFamily: 'Amiri Quran' }}>
+                    درصد اطمینان
+                  </Label>
+                  <p className="text-black font-bold text-lg" style={{ fontFamily: 'Amiri Quran' }}>
+                    {selectedMiner.confidence}%
+                  </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-muted-foreground">وضعیت</Label>
+                  <Label className="text-base font-bold text-black" style={{ fontFamily: 'Amiri Quran' }}>
+                    وضعیت عملکرد
+                  </Label>
                   <Badge 
-                    variant={selectedMiner.status === 'active' ? 'default' : 'outline'}
-                    className={selectedMiner.status === 'active' ? 'bg-accent text-accent-foreground' : ''}
+                    className={`px-4 py-2 text-base font-bold border-2 ${
+                      selectedMiner.status === 'active' ? 'bg-green-500 border-green-700 text-white' :
+                      selectedMiner.status === 'suspected' ? 'bg-yellow-500 border-yellow-700 text-black' :
+                      'bg-red-500 border-red-700 text-white'
+                    }`}
+                    style={{ fontFamily: 'Amiri Quran' }}
                   >
                     {selectedMiner.status === 'active' ? 'فعال' :
                      selectedMiner.status === 'suspected' ? 'مشکوک' : 'غیرفعال'}
@@ -258,14 +366,30 @@ const SmartMap = () => {
               </div>
             </div>
             
-            <div className="flex gap-3 mt-6">
-              <Button className="bg-primary hover:bg-primary/90">
+            <div className="flex gap-4 mt-8">
+              <Button 
+                className="access-button text-base"
+                onClick={() => routeToLocation(selectedMiner)}
+              >
                 مسیریابی به این مکان
               </Button>
-              <Button variant="outline">
-                اشتراک‌گذاری مختصات
+              <Button 
+                className="access-button text-base"
+                onClick={() => {
+                  navigator.clipboard.writeText(`${selectedMiner.lat}, ${selectedMiner.lng}`);
+                  alert('مختصات کپی شد');
+                }}
+              >
+                کپی مختصات
               </Button>
-              <Button variant="outline">
+              <Button 
+                className="access-button text-base"
+                onClick={() => {
+                  const report = `گزارش دستگاه: ${selectedMiner.name}\nآدرس: ${selectedMiner.address}\nنرخ هش: ${selectedMiner.hashRate}\nاطمینان: ${selectedMiner.confidence}%`;
+                  navigator.clipboard.writeText(report);
+                  alert('گزارش کپی شد');
+                }}
+              >
                 ایجاد گزارش
               </Button>
             </div>
