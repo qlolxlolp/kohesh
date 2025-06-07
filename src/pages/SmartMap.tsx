@@ -41,13 +41,13 @@ const SmartMap = () => {
 
   // Initialize map when API is loaded
   useEffect(() => {
-    if (!isLoaded || !mapRef.current || map) return;
+    if (!isLoaded || !mapRef.current || map || !window.google?.maps) return;
 
     try {
-      const initialMap = new google.maps.Map(mapRef.current, {
+      const initialMap = new window.google.maps.Map(mapRef.current, {
         center: { lat: 35.6892, lng: 51.3890 }, // Tehran coordinates
         zoom: 10,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        mapTypeId: window.google.maps.MapTypeId.ROADMAP,
         styles: [
           {
             featureType: "all",
@@ -66,7 +66,7 @@ const SmartMap = () => {
 
   // Get user location
   useEffect(() => {
-    if (!map) return;
+    if (!map || !window.google?.maps) return;
 
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -78,7 +78,7 @@ const SmartMap = () => {
           setUserLocation(location);
           
           // Add marker for user location
-          new google.maps.Marker({
+          new window.google!.maps.Marker({
             position: location,
             map: map,
             title: 'موقعیت شما',
@@ -88,7 +88,7 @@ const SmartMap = () => {
                   <circle cx="12" cy="12" r="8"/>
                 </svg>
               `),
-              scaledSize: new google.maps.Size(24, 24)
+              scaledSize: new window.google!.maps.Size(24, 24)
             }
           });
 
@@ -102,15 +102,15 @@ const SmartMap = () => {
   }, [map]);
 
   const handleRouting = () => {
-    if (!map || !userLocation) {
+    if (!map || !userLocation || !window.google?.maps) {
       console.log('نقشه یا موقعیت کاربر در دسترس نیست');
       return;
     }
 
     console.log('مسیریابی شروع شد از موقعیت:', userLocation);
     
-    const directionsService = new google.maps.DirectionsService();
-    const directionsRenderer = new google.maps.DirectionsRenderer();
+    const directionsService = new window.google.maps.DirectionsService();
+    const directionsRenderer = new window.google.maps.DirectionsRenderer();
     
     directionsRenderer.setMap(map);
     
@@ -120,7 +120,7 @@ const SmartMap = () => {
     directionsService.route({
       origin: userLocation,
       destination: destination,
-      travelMode: google.maps.TravelMode.DRIVING
+      travelMode: window.google.maps.TravelMode.DRIVING
     }, (result, status) => {
       if (status === 'OK' && result) {
         directionsRenderer.setDirections(result);
@@ -132,7 +132,7 @@ const SmartMap = () => {
   };
 
   const handleDetection = () => {
-    if (!map) return;
+    if (!map || !window.google?.maps) return;
     
     console.log('تشخیص هوشمند شروع شد');
     
@@ -148,7 +148,7 @@ const SmartMap = () => {
         const color = point.type === 'suspicious' ? 'red' : 
                      point.type === 'normal' ? 'yellow' : 'green';
         
-        new google.maps.Marker({
+        new window.google!.maps.Marker({
           position: { lat: point.lat, lng: point.lng },
           map: map,
           title: `نقطه تشخیص ${index + 1}`,
@@ -158,7 +158,7 @@ const SmartMap = () => {
                 <circle cx="10" cy="10" r="8" stroke="black" stroke-width="1"/>
               </svg>
             `),
-            scaledSize: new google.maps.Size(20, 20)
+            scaledSize: new window.google!.maps.Size(20, 20)
           }
         });
         
