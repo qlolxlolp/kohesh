@@ -1,64 +1,132 @@
 
 declare global {
   interface Window {
-    google: any;
+    google: typeof google;
   }
 }
 
 declare namespace google {
   namespace maps {
     class Map {
-      constructor(mapDiv: HTMLElement, options?: any);
-      fitBounds(bounds: any): void;
-      setCenter(center: any): void;
+      constructor(mapDiv: HTMLElement, opts?: MapOptions);
+      setCenter(latlng: LatLng | LatLngLiteral): void;
+      getCenter(): LatLng;
       setZoom(zoom: number): void;
+      getZoom(): number;
+      fitBounds(bounds: LatLngBounds): void;
+      addListener(eventName: string, handler: Function): MapsEventListener;
     }
-    
-    class Marker {
-      constructor(options?: any);
-      setMap(map: Map | null): void;
-      getPosition(): any;
-      addListener(event: string, callback: Function): void;
+
+    interface MapOptions {
+      center?: LatLng | LatLngLiteral;
+      zoom?: number;
+      mapTypeId?: MapTypeId;
     }
-    
-    class InfoWindow {
-      constructor(options?: any);
-      open(map: Map, marker: Marker): void;
-      setContent(content: string): void;
+
+    class LatLng {
+      constructor(lat: number, lng: number);
+      lat(): number;
+      lng(): number;
     }
-    
+
+    interface LatLngLiteral {
+      lat: number;
+      lng: number;
+    }
+
     class LatLngBounds {
-      constructor();
-      extend(point: any): void;
+      constructor(sw?: LatLng, ne?: LatLng);
+      extend(point: LatLng): LatLngBounds;
     }
-    
-    class DirectionsService {
-      constructor();
-      route(request: any, callback: Function): void;
+
+    class Marker {
+      constructor(opts?: MarkerOptions);
+      setMap(map: Map | null): void;
+      getPosition(): LatLng | undefined;
+      addListener(eventName: string, handler: Function): MapsEventListener;
     }
-    
-    class DirectionsRenderer {
-      constructor();
-      setMap(map: Map): void;
-      setDirections(result: any): void;
+
+    interface MarkerOptions {
+      position?: LatLng | LatLngLiteral;
+      map?: Map;
+      title?: string;
+      icon?: string | Icon;
     }
-    
+
+    interface Icon {
+      url: string;
+      scaledSize?: Size;
+    }
+
     class Size {
       constructor(width: number, height: number);
     }
-    
+
+    class InfoWindow {
+      constructor(opts?: InfoWindowOptions);
+      open(map: Map, anchor?: Marker): void;
+      close(): void;
+    }
+
+    interface InfoWindowOptions {
+      content?: string | HTMLElement;
+    }
+
+    class DirectionsService {
+      route(request: DirectionsRequest, callback: (result: DirectionsResult | null, status: DirectionsStatus) => void): void;
+    }
+
+    class DirectionsRenderer {
+      constructor(opts?: DirectionsRendererOptions);
+      setMap(map: Map | null): void;
+      setDirections(directions: DirectionsResult): void;
+    }
+
+    interface DirectionsRendererOptions {
+      polylineOptions?: {
+        strokeColor?: string;
+        strokeOpacity?: number;
+        strokeWeight?: number;
+      };
+    }
+
+    interface DirectionsRequest {
+      origin: LatLng | LatLngLiteral | string;
+      destination: LatLng | LatLngLiteral | string;
+      travelMode: TravelMode;
+    }
+
+    interface DirectionsResult {
+      routes: DirectionsRoute[];
+    }
+
+    interface DirectionsRoute {
+      legs: DirectionsLeg[];
+    }
+
+    interface DirectionsLeg {
+      distance: { text: string; value: number };
+      duration: { text: string; value: number };
+    }
+
     enum MapTypeId {
       ROADMAP = 'roadmap',
       SATELLITE = 'satellite',
       HYBRID = 'hybrid',
       TERRAIN = 'terrain'
     }
-    
+
     enum TravelMode {
       DRIVING = 'DRIVING',
       WALKING = 'WALKING',
       BICYCLING = 'BICYCLING',
       TRANSIT = 'TRANSIT'
+    }
+
+    type DirectionsStatus = 'OK' | 'NOT_FOUND' | 'ZERO_RESULTS' | 'MAX_WAYPOINTS_EXCEEDED' | 'INVALID_REQUEST' | 'OVER_QUERY_LIMIT' | 'REQUEST_DENIED' | 'UNKNOWN_ERROR';
+
+    interface MapsEventListener {
+      remove(): void;
     }
   }
 }
