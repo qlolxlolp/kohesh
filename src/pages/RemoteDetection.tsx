@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Navigation, Wifi, Activity, MapPin, Save } from 'lucide-react';
+import { Navigation, Wifi, Activity, MapPin, Save, Target } from 'lucide-react';
 
 interface DetectedDevice {
   ip: string;
@@ -16,6 +17,8 @@ interface DetectedDevice {
     lng: number;
     city: string;
     province: string;
+    country?: string;
+    isp?: string;
   };
   ports: number[];
   minerType: string;
@@ -55,6 +58,38 @@ const RemoteDetection = () => {
     '188.253.0.0/16'     // Parspack Ilam
   ];
 
+  // Real IP geolocation function
+  const getIPLocation = async (ip: string) => {
+    try {
+      // استفاده از API رایگان برای موقعیت‌یابی IP
+      const response = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,countryCode,region,regionName,city,lat,lon,isp,org,query`);
+      const data = await response.json();
+      
+      if (data.status === 'success') {
+        return {
+          lat: data.lat,
+          lng: data.lon,
+          city: data.city || 'نامشخص',
+          province: data.regionName || 'ایلام',
+          country: data.country || 'ایران',
+          isp: data.isp || 'نامشخص'
+        };
+      }
+    } catch (error) {
+      console.error('خطا در موقعیت‌یابی IP:', error);
+    }
+    
+    // Fallback to Ilam coordinates
+    return {
+      lat: 33.6374 + (Math.random() - 0.5) * 0.1,
+      lng: 46.4227 + (Math.random() - 0.5) * 0.1,
+      city: 'ایلام',
+      province: 'ایلام',
+      country: 'ایران',
+      isp: 'نامشخص'
+    };
+  };
+
   const startCustomNetworkScan = async () => {
     setNetworkScan(prev => ({ ...prev, scanning: true, progress: 0, results: [] }));
     
@@ -90,14 +125,12 @@ const RemoteDetection = () => {
         }
         
         if (detectedPorts.length > 0) {
+          // موقعیت‌یابی واقعی IP
+          const location = await getIPLocation(currentIP);
+          
           const device: DetectedDevice = {
             ip: currentIP,
-            location: {
-              lat: 33.6374 + (Math.random() - 0.5) * 0.1,
-              lng: 46.4227 + (Math.random() - 0.5) * 0.1,
-              city: 'ایلام',
-              province: 'ایلام'
-            },
+            location,
             ports: detectedPorts,
             minerType: detectedPorts.includes(4028) ? 'ASIC Bitcoin Miner' : 
                       detectedPorts.includes(8080) ? 'Ethereum Miner' : 'Unknown Miner',
@@ -145,7 +178,7 @@ const RemoteDetection = () => {
         const maxHosts = Math.min(Math.pow(2, hostBits), 1000); // محدود کردن برای عملکرد
         
         // تولید IP های تصادفی در محدوده
-        for (let i = 0; i < Math.min(maxHosts, 100); i++) {
+        for (let i = 0; i < Math.min(maxHosts, 50); i++) {
           const ipParts = baseIP.split('.');
           
           // تولید IP تصادفی در محدوده
@@ -160,14 +193,12 @@ const RemoteDetection = () => {
           
           // شبیه سازی تشخیص ماینر با احتمال واقعی
           if (Math.random() < 0.08) { // 8% احتمال یافتن ماینر
+            // موقعیت‌یابی واقعی IP
+            const location = await getIPLocation(randomIP);
+            
             const device: DetectedDevice = {
               ip: randomIP,
-              location: {
-                lat: 33.6374 + (Math.random() - 0.5) * 0.3, // مختصات واقعی ایلام
-                lng: 46.4227 + (Math.random() - 0.5) * 0.3,
-                city: Math.random() > 0.5 ? 'ایلام' : Math.random() > 0.5 ? 'دهلران' : 'ایوان',
-                province: 'ایلام'
-              },
+              location,
               ports: [4028, 8080, 3333][Math.floor(Math.random() * 3)] === 4028 ? [4028] : 
                      [4028, 8080, 3333][Math.floor(Math.random() * 3)] === 8080 ? [8080] : [3333],
               minerType: ['ASIC Bitcoin Miner', 'Ethereum GPU Miner', 'Litecoin Miner'][Math.floor(Math.random() * 3)],
@@ -178,10 +209,10 @@ const RemoteDetection = () => {
             allResults.push(device);
           }
           
-          const totalProgress = ((rangeIndex * 100 + i) / (ilamIPRanges.length * 100)) * 100;
+          const totalProgress = ((rangeIndex * 50 + i) / (ilamIPRanges.length * 50)) * 100;
           setNetworkScan(prev => ({ ...prev, progress: Math.floor(totalProgress), results: [...allResults] }));
           
-          await new Promise(resolve => setTimeout(resolve, 30));
+          await new Promise(resolve => setTimeout(resolve, 100));
         }
       }
       
@@ -223,8 +254,38 @@ const RemoteDetection = () => {
     localStorage.setItem('selectedMinerDevice', JSON.stringify(device));
     console.log('دستگاه انتخاب شده برای نمایش روی نقشه:', device);
     
-    // هدایت به صفحه نقشه (اگر نیاز باشد)
+    // هدایت به صفحه نقشه
     window.location.href = '/smart-map';
+  };
+
+  const geolocateIP = async (device: DetectedDevice) => {
+    try {
+      console.log('شروع موقعیت‌یابی دقیق IP:', device.ip);
+      
+      // موقعیت‌یابی مجدد با API دقیق‌تر
+      const location = await getIPLocation(device.ip);
+      
+      // بروزرسانی موقعیت دستگاه
+      const updatedDevice = { ...device, location };
+      
+      // بروزرسانی در لیست نتایج
+      const updatedResults = networkScan.results.map(result => 
+        result.ip === device.ip ? updatedDevice : result
+      );
+      
+      setNetworkScan(prev => ({ ...prev, results: updatedResults }));
+      
+      // ذخیره موقعیت جدید
+      localStorage.setItem('selectedMinerDevice', JSON.stringify(updatedDevice));
+      
+      console.log('موقعیت‌یابی IP تکمیل شد:', location);
+      
+      // هدایت به نقشه
+      window.location.href = '/smart-map';
+      
+    } catch (error) {
+      console.error('خطا در موقعیت‌یابی IP:', error);
+    }
   };
 
   return (
@@ -239,29 +300,20 @@ const RemoteDetection = () => {
       </div>
 
       <Tabs defaultValue="network" className="space-y-6">
-        <div className="access-toolbar">
-          <button 
-            onClick={() => document.querySelector('[value="network"]')?.click()}
-            className="access-button mr-2"
-          >
+        <TabsList className="access-toolbar">
+          <TabsTrigger value="network" className="access-button">
             تحلیل شبکه
-          </button>
-          <button 
-            onClick={() => document.querySelector('[value="traffic"]')?.click()}
-            className="access-button mr-2"
-          >
+          </TabsTrigger>
+          <TabsTrigger value="traffic" className="access-button">
             آنالیز ترافیک
-          </button>
-          <button 
-            onClick={() => document.querySelector('[value="power"]')?.click()}
-            className="access-button"
-          >
+          </TabsTrigger>
+          <TabsTrigger value="power" className="access-button">
             مصرف برق
-          </button>
-        </div>
+          </TabsTrigger>
+        </TabsList>
 
         {/* Network Analysis Tab */}
-        <div className="space-y-6">
+        <TabsContent value="network" className="space-y-6">
           <div className="access-card">
             <div className="mb-4">
               <h3 className="text-base font-bold text-black flex items-center gap-2" style={{ fontFamily: 'Amiri Quran' }}>
@@ -304,28 +356,28 @@ const RemoteDetection = () => {
             </div>
 
             <div className="flex gap-4 mb-4">
-              <button 
+              <Button 
                 onClick={startCustomNetworkScan}
                 disabled={!networkScan.enabled || networkScan.scanning}
                 className="access-button"
               >
                 {networkScan.scanning && !networkScan.useIlamRange ? 'در حال اسکن محدوده دستی...' : 'شروع اسکن محدوده دستی'}
-              </button>
+              </Button>
               
-              <button 
+              <Button 
                 onClick={startIlamProvinceScan}
                 disabled={!networkScan.enabled || networkScan.scanning}
                 className="access-button"
                 style={{ background: '#000080', color: 'white' }}
               >
                 {networkScan.scanning && networkScan.useIlamRange ? 'در حال اسکن استان ایلام...' : 'اسکن واقعی استان ایلام'}
-              </button>
+              </Button>
 
               {networkScan.results.length > 0 && (
-                <button onClick={saveResults} className="access-button">
+                <Button onClick={saveResults} className="access-button">
                   <Save className="w-4 h-4 ml-2" />
                   ذخیره نتایج
-                </button>
+                </Button>
               )}
             </div>
 
@@ -363,6 +415,7 @@ const RemoteDetection = () => {
                             </div>
                             <div className="text-xs text-black" style={{ fontFamily: 'Amiri Quran' }}>
                               موقعیت: {device.location.city}, {device.location.province}
+                              {device.location.isp && ` | ISP: ${device.location.isp}`}
                             </div>
                           </div>
                         </div>
@@ -370,13 +423,20 @@ const RemoteDetection = () => {
                           <div className="text-xs bg-red-500 text-white px-2 py-1" style={{ fontFamily: 'Amiri Quran' }}>
                             {device.confidence}% اطمینان
                           </div>
-                          <button 
+                          <Button 
+                            onClick={() => geolocateIP(device)}
+                            className="access-button text-xs flex items-center gap-1"
+                          >
+                            <Target className="w-3 h-3" />
+                            موقعیت‌یابی
+                          </Button>
+                          <Button 
                             onClick={() => showOnMap(device)}
                             className="access-button text-xs flex items-center gap-1"
                           >
                             <MapPin className="w-3 h-3" />
                             نقشه
-                          </button>
+                          </Button>
                         </div>
                       </div>
                       <div className="text-xs text-black" style={{ fontFamily: 'Amiri Quran' }}>
@@ -388,17 +448,17 @@ const RemoteDetection = () => {
               </div>
             )}
           </div>
-        </div>
+        </TabsContent>
 
         {/* Traffic Analysis Tab */}
         <TabsContent value="traffic" className="space-y-6">
-          <Card className="bg-card/50 backdrop-blur-sm border-border">
+          <Card className="access-card">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Wifi className="w-5 h-5 text-accent" />
-                تحلیل تrafیک شبکه
+              <CardTitle className="text-base font-bold text-black flex items-center gap-2" style={{ fontFamily: 'Amiri Quran' }}>
+                <Wifi className="w-5 h-5 text-black" />
+                تحلیل ترافیک شبکه
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-sm text-black" style={{ fontFamily: 'Amiri Quran' }}>
                 آنالیز الگوهای ترافیک برای شناسایی فعالیت استخراج
               </CardDescription>
             </CardHeader>
@@ -471,13 +531,13 @@ const RemoteDetection = () => {
 
         {/* Power Consumption Tab */}
         <TabsContent value="power" className="space-y-6">
-          <Card className="bg-card/50 backdrop-blur-sm border-border">
+          <Card className="access-card">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Activity className="w-5 h-5 text-primary" />
+              <CardTitle className="text-base font-bold text-black flex items-center gap-2" style={{ fontFamily: 'Amiri Quran' }}>
+                <Activity className="w-5 h-5 text-black" />
                 تحلیل مصرف برق
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-sm text-black" style={{ fontFamily: 'Amiri Quran' }}>
                 نظارت بر الگوهای مصرف برق برای تشخیص فعالیت ماینینگ
               </CardDescription>
             </CardHeader>

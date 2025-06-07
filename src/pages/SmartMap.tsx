@@ -11,6 +11,8 @@ interface DetectedDevice {
     lng: number;
     city: string;
     province: string;
+    country?: string;
+    isp?: string;
   };
   ports: number[];
   minerType: string;
@@ -25,6 +27,7 @@ const SmartMap = () => {
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
   const [detectedDevices, setDetectedDevices] = useState<DetectedDevice[]>([]);
   const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
+  const [directionsRenderer, setDirectionsRenderer] = useState<google.maps.DirectionsRenderer | null>(null);
 
   // Load detected miners from localStorage
   useEffect(() => {
@@ -72,7 +75,7 @@ const SmartMap = () => {
   // Load Google Maps API
   useEffect(() => {
     const loadGoogleMaps = () => {
-      if ((window as any).google?.maps) {
+      if (window.google?.maps) {
         setIsLoaded(true);
         return;
       }
@@ -144,8 +147,13 @@ const SmartMap = () => {
             <p style="margin: 4px 0; color: #333;"><strong>IP:</strong> ${device.ip}</p>
             <p style="margin: 4px 0; color: #333;"><strong>پورت‌ها:</strong> ${device.ports.join(', ')}</p>
             <p style="margin: 4px 0; color: #333;"><strong>موقعیت:</strong> ${device.location.city}, ${device.location.province}</p>
+            ${device.location.isp ? `<p style="margin: 4px 0; color: #333;"><strong>ISP:</strong> ${device.location.isp}</p>` : ''}
             <p style="margin: 4px 0; color: #333;"><strong>اطمینان:</strong> ${device.confidence}%</p>
             <p style="margin: 4px 0; color: #333;"><strong>مختصات:</strong> ${device.location.lat.toFixed(4)}, ${device.location.lng.toFixed(4)}</p>
+            <button onclick="routeToDevice(${device.location.lat}, ${device.location.lng})" 
+                    style="background: #0000ff; color: white; padding: 5px 10px; border: none; margin-top: 8px; cursor: pointer;">
+              مسیریابی
+            </button>
           </div>
         `
       });
@@ -208,6 +216,21 @@ const SmartMap = () => {
     }
   }, [map]);
 
+  // Global function for routing from info window
+  useEffect(() => {
+    (window as any).routeToDevice = (lat: number, lng: number) => {
+      if (userLocation) {
+        handleRoutingTo({ lat, lng });
+      } else {
+        console.log('موقعیت کاربر شناسایی نشده است');
+      }
+    };
+    
+    return () => {
+      delete (window as any).routeToDevice;
+    };
+  }, [userLocation]);
+
   const handleRouting = () => {
     if (!map || !userLocation) {
       console.log('نقشه یا موقعیت کاربر در دسترس نیست');
@@ -219,18 +242,42 @@ const SmartMap = () => {
       return;
     }
 
-    console.log('مسیریابی شروع شد از موقعیت:', userLocation);
+    // Route to the nearest device
+    let nearestDevice = detectedDevices[0];
+    let minDistance = calculateDistance(userLocation, nearestDevice.location);
+
+    detectedDevices.forEach(device => {
+      const distance = calculateDistance(userLocation, device.location);
+      if (distance < minDistance) {
+        minDistance = distance;
+        nearestDevice = device;
+      }
+    });
+
+    handleRoutingTo(nearestDevice.location);
+  };
+
+  const handleRoutingTo = (destination: { lat: number; lng: number }) => {
+    if (!map || !userLocation) return;
+
+    console.log('مسیریابی شروع شد از موقعیت:', userLocation, 'به مقصد:', destination);
     
+    // Clear previous route
+    if (directionsRenderer) {
+      directionsRenderer.setMap(null);
+    }
+
     const directionsService = new google.maps.DirectionsService();
-    const directionsRenderer = new google.maps.DirectionsRenderer();
+    const newDirectionsRenderer = new google.maps.DirectionsRenderer({
+      polylineOptions: {
+        strokeColor: '#ff0000',
+        strokeOpacity: 0.8,
+        strokeWeight: 4
+      }
+    });
     
-    directionsRenderer.setMap(map);
-    
-    // Route to the first detected device
-    const destination = { 
-      lat: detectedDevices[0].location.lat, 
-      lng: detectedDevices[0].location.lng 
-    };
+    newDirectionsRenderer.setMap(map);
+    setDirectionsRenderer(newDirectionsRenderer);
     
     directionsService.route({
       origin: userLocation,
@@ -238,12 +285,28 @@ const SmartMap = () => {
       travelMode: google.maps.TravelMode.DRIVING
     }, (result: any, status: string) => {
       if (status === 'OK' && result) {
-        directionsRenderer.setDirections(result);
-        console.log('مسیر محاسبه شد به دستگاه ماینر:', detectedDevices[0].ip);
+        newDirectionsRenderer.setDirections(result);
+        console.log('مسیر محاسبه شد:', result);
+        
+        // Show route info
+        const route = result.routes[0];
+        const leg = route.legs[0];
+        console.log(`مسافت: ${leg.distance.text}, زمان: ${leg.duration.text}`);
       } else {
         console.error('خطا در مسیریابی:', status);
       }
     });
+  };
+
+  const calculateDistance = (point1: { lat: number; lng: number }, point2: { lat: number; lng: number }) => {
+    const R = 6371; // Earth's radius in kilometers
+    const dLat = (point2.lat - point1.lat) * Math.PI / 180;
+    const dLng = (point2.lng - point1.lng) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(point1.lat * Math.PI / 180) * Math.cos(point2.lat * Math.PI / 180) *
+              Math.sin(dLng/2) * Math.sin(dLng/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
   };
 
   const clearDetections = () => {
@@ -256,7 +319,21 @@ const SmartMap = () => {
     markers.forEach(marker => marker.setMap(null));
     setMarkers([]);
     
+    // Clear route
+    if (directionsRenderer) {
+      directionsRenderer.setMap(null);
+      setDirectionsRenderer(null);
+    }
+    
     console.log('همه تشخیص‌ها پاک شدند');
+  };
+
+  const clearRoute = () => {
+    if (directionsRenderer) {
+      directionsRenderer.setMap(null);
+      setDirectionsRenderer(null);
+      console.log('مسیر پاک شد');
+    }
   };
 
   return (
@@ -281,6 +358,11 @@ const SmartMap = () => {
               <Button onClick={handleRouting} className="w-full access-button">
                 <Route className="w-4 h-4 ml-2" />
                 مسیریابی به نزدیکترین ماینر
+              </Button>
+              
+              <Button onClick={clearRoute} className="w-full access-button">
+                <Navigation className="w-4 h-4 ml-2" />
+                پاک کردن مسیر
               </Button>
               
               <Button onClick={clearDetections} className="w-full access-button">
