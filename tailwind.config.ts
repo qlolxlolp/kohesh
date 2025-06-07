@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -19,54 +20,54 @@ export default {
 		},
 		extend: {
 			colors: {
-				border: 'hsl(var(--border))',
-				input: 'hsl(var(--input))',
-				ring: 'hsl(var(--ring))',
-				background: 'hsl(var(--background))',
-				foreground: 'hsl(var(--foreground))',
+				border: 'rgb(128, 128, 128)',
+				input: 'rgb(255, 255, 255)',
+				ring: 'rgb(0, 0, 128)',
+				background: 'rgb(240, 240, 240)',
+				foreground: 'rgb(0, 0, 0)',
 				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					DEFAULT: 'rgb(0, 0, 128)',
+					foreground: 'rgb(255, 255, 255)'
 				},
 				secondary: {
-					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))'
+					DEFAULT: 'rgb(192, 192, 192)',
+					foreground: 'rgb(0, 0, 0)'
 				},
 				destructive: {
-					DEFAULT: 'hsl(var(--destructive))',
-					foreground: 'hsl(var(--destructive-foreground))'
+					DEFAULT: 'rgb(255, 0, 0)',
+					foreground: 'rgb(255, 255, 255)'
 				},
 				muted: {
-					DEFAULT: 'hsl(var(--muted))',
-					foreground: 'hsl(var(--muted-foreground))'
+					DEFAULT: 'rgb(236, 233, 216)',
+					foreground: 'rgb(64, 64, 64)'
 				},
 				accent: {
-					DEFAULT: 'hsl(var(--accent))',
-					foreground: 'hsl(var(--accent-foreground))'
+					DEFAULT: 'rgb(0, 0, 128)',
+					foreground: 'rgb(255, 255, 255)'
 				},
 				popover: {
-					DEFAULT: 'hsl(var(--popover))',
-					foreground: 'hsl(var(--popover-foreground))'
+					DEFAULT: 'rgb(236, 233, 216)',
+					foreground: 'rgb(0, 0, 0)'
 				},
 				card: {
-					DEFAULT: 'hsl(var(--card))',
-					foreground: 'hsl(var(--card-foreground))'
+					DEFAULT: 'rgb(236, 233, 216)',
+					foreground: 'rgb(0, 0, 0)'
 				},
 				sidebar: {
-					DEFAULT: 'hsl(var(--sidebar-background))',
-					foreground: 'hsl(var(--sidebar-foreground))',
-					primary: 'hsl(var(--sidebar-primary))',
-					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-					accent: 'hsl(var(--sidebar-accent))',
-					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-					border: 'hsl(var(--sidebar-border))',
-					ring: 'hsl(var(--sidebar-ring))'
+					DEFAULT: 'rgb(192, 192, 192)',
+					foreground: 'rgb(0, 0, 0)',
+					primary: 'rgb(0, 0, 128)',
+					'primary-foreground': 'rgb(255, 255, 255)',
+					accent: 'rgb(236, 233, 216)',
+					'accent-foreground': 'rgb(0, 0, 0)',
+					border: 'rgb(128, 128, 128)',
+					ring: 'rgb(0, 0, 128)'
 				}
 			},
 			borderRadius: {
-				lg: 'var(--radius)',
-				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				lg: '0px',
+				md: '0px',
+				sm: '0px'
 			},
 			keyframes: {
 				'accordion-down': {

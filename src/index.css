@@ -6,49 +6,44 @@
 
 @layer base {
   :root {
-    --background: #f5f5dc;
+    --background: 240 240 240;
     --foreground: 0 0 0;
 
-    --card: 245 245 220;
+    --card: 236 233 216;
     --card-foreground: 0 0 0;
 
-    --popover: 245 245 220;
+    --popover: 236 233 216;
     --popover-foreground: 0 0 0;
 
-    --primary: 139 69 19;
+    --primary: 0 0 128;
     --primary-foreground: 255 255 255;
 
-    --secondary: 222 184 135;
+    --secondary: 192 192 192;
     --secondary-foreground: 0 0 0;
 
-    --muted: #f5f5dc;
-    --muted-foreground: 109 109 109;
+    --muted: 236 233 216;
+    --muted-foreground: 64 64 64;
 
-    --accent: 160 82 45;
+    --accent: 0 0 128;
     --accent-foreground: 255 255 255;
 
-    --destructive: 196 43 28;
+    --destructive: 255 0 0;
     --destructive-foreground: 255 255 255;
 
-    --border: 139 69 19;
-    --input: 245 245 220;
-    --ring: 160 82 45;
+    --border: 128 128 128;
+    --input: 255 255 255;
+    --ring: 0 0 128;
 
-    --radius: 4px;
+    --radius: 0px;
 
-    --sidebar-background: 222 184 135;
+    --sidebar-background: 192 192 192;
     --sidebar-foreground: 0 0 0;
-    --sidebar-primary: 139 69 19;
+    --sidebar-primary: 0 0 128;
     --sidebar-primary-foreground: 255 255 255;
-    --sidebar-accent: 245 245 220;
+    --sidebar-accent: 236 233 216;
     --sidebar-accent-foreground: 0 0 0;
-    --sidebar-border: 139 69 19;
-    --sidebar-ring: 160 82 45;
-
-    --footer-background: 210 180 140;
-    --header-background: 222 184 135;
-    --button-background: 245 245 220;
-    --button-text: 0 0 0;
+    --sidebar-border: 128 128 128;
+    --sidebar-ring: 0 0 128;
   }
 }
 
@@ -60,7 +55,7 @@
   }
 
   body {
-    background: linear-gradient(135deg, #f5f5dc 0%, #deb887 100%) !important;
+    background: #f0f0f0 !important;
     color: black !important;
     font-family: 'Amiri Quran', serif !important;
     font-size: 14px;
@@ -69,98 +64,79 @@
   }
 
   html {
-    background: linear-gradient(135deg, #f5f5dc 0%, #deb887 100%) !important;
+    background: #f0f0f0 !important;
   }
 
   #root {
-    background: linear-gradient(135deg, #f5f5dc 0%, #deb887 100%) !important;
+    background: #f0f0f0 !important;
     min-height: 100vh;
   }
 
   .sidebar-button {
-    background: linear-gradient(145deg, #f5f5dc 0%, #deb887 50%, #cd853f 100%);
-    border: 2px solid #8b4513;
-    border-radius: 8px;
+    background: #c0c0c0;
+    border: 2px outset #c0c0c0;
     color: black;
     font-family: 'Amiri Quran', serif;
     font-size: 16px;
     font-weight: 700;
-    padding: 12px 16px;
-    margin: 6px 0;
+    padding: 8px 12px;
+    margin: 4px 0;
     cursor: pointer;
-    box-shadow: 
-      3px 3px 8px rgba(139, 69, 19, 0.3),
-      inset 1px 1px 3px rgba(245, 245, 220, 0.8);
-    transition: all 0.2s ease;
+    transition: none;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 12px;
-    min-height: 50px;
+    gap: 8px;
+    min-height: 40px;
     text-align: right;
     width: 100%;
   }
 
   .sidebar-button:hover {
-    background: linear-gradient(145deg, #fff8dc 0%, #f0e68c 50%, #daa520 100%);
-    transform: translateY(-1px);
-    box-shadow: 
-      4px 4px 12px rgba(139, 69, 19, 0.4),
-      inset 1px 1px 4px rgba(255, 255, 255, 0.9);
+    background: #e0e0e0;
   }
 
   .sidebar-button:active {
-    transform: translateY(1px);
-    box-shadow: 
-      2px 2px 6px rgba(139, 69, 19, 0.4),
-      inset 2px 2px 6px rgba(139, 69, 19, 0.2);
+    border: 2px inset #c0c0c0;
   }
 
   .sidebar-button.active {
-    background: linear-gradient(145deg, #daa520 0%, #b8860b 50%, #8b4513 100%);
+    background: #000080;
     color: white;
-    box-shadow: 
-      inset 2px 2px 6px rgba(139, 69, 19, 0.4),
-      2px 2px 8px rgba(139, 69, 19, 0.3);
+    border: 2px inset #000080;
   }
 
   .access-button {
-    background: linear-gradient(145deg, #f5f5dc 0%, #deb887 100%);
-    border: 2px solid #8b4513;
-    border-radius: 6px;
+    background: #c0c0c0;
+    border: 2px outset #c0c0c0;
     color: black;
     font-family: 'Amiri Quran', serif;
     font-size: 14px;
     font-weight: 700;
-    padding: 8px 16px;
+    padding: 6px 12px;
     cursor: pointer;
-    box-shadow: 2px 2px 6px rgba(139, 69, 19, 0.3);
-    transition: all 0.2s ease;
+    transition: none;
   }
 
   .access-button:hover {
-    background: linear-gradient(145deg, #fff8dc 0%, #f0e68c 100%);
-    transform: translateY(-1px);
+    background: #e0e0e0;
   }
 
   .access-button:active {
-    transform: translateY(1px);
-    box-shadow: inset 1px 1px 3px rgba(139, 69, 19, 0.3);
+    border: 2px inset #c0c0c0;
   }
 
   .dashboard-card {
-    background: linear-gradient(145deg, #f5f5dc 0%, #deb887 100%);
-    border: 2px solid #8b4513;
-    border-radius: 12px;
+    background: #ece9d8;
+    border: 2px outset #ece9d8;
     color: black;
     font-family: 'Amiri Quran', serif;
     font-size: 16px;
     font-weight: 700;
-    padding: 20px;
+    padding: 16px;
     cursor: pointer;
-    box-shadow: 4px 4px 12px rgba(139, 69, 19, 0.3);
-    transition: all 0.3s ease;
-    min-height: 140px;
+    transition: none;
+    min-height: 120px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -169,49 +145,46 @@
   }
 
   .dashboard-card:hover {
-    background: linear-gradient(145deg, #fff8dc 0%, #f0e68c 100%);
-    transform: translateY(-3px);
-    box-shadow: 6px 6px 16px rgba(139, 69, 19, 0.4);
+    background: #f5f2e8;
+  }
+
+  .dashboard-card:active {
+    border: 2px inset #ece9d8;
   }
 
   .access-field {
-    background: #f5f5dc;
-    border: 2px solid #8b4513;
-    border-radius: 4px;
+    background: white;
+    border: 2px inset #c0c0c0;
     color: black;
     font-family: 'Amiri Quran', serif;
     font-size: 14px;
     font-weight: 600;
-    padding: 8px 12px;
+    padding: 4px 8px;
   }
 
   .access-field:focus {
-    border: 2px solid #cd853f;
-    outline: none;
-    box-shadow: 0 0 8px rgba(205, 133, 63, 0.3);
+    outline: 1px dotted black;
+    outline-offset: -2px;
   }
 
   .access-toolbar {
-    background: linear-gradient(to bottom, #deb887 0%, #cd853f 100%);
-    border-bottom: 2px solid #8b4513;
-    padding: 8px;
+    background: #c0c0c0;
+    border-bottom: 1px solid #808080;
+    padding: 4px;
   }
 
   .access-card {
-    background: linear-gradient(145deg, #f5f5dc 0%, #deb887 100%);
-    border: 2px solid #8b4513;
-    border-radius: 8px;
-    padding: 16px;
-    margin: 8px;
-    box-shadow: 3px 3px 8px rgba(139, 69, 19, 0.3);
+    background: #ece9d8;
+    border: 2px outset #ece9d8;
+    padding: 12px;
+    margin: 4px;
     color: black;
   }
 
   .access-status-bar {
-    background: linear-gradient(to bottom, #deb887 0%, #cd853f 100%);
-    border-top: 2px solid #8b4513;
-    border-bottom: 2px solid #8b4513;
-    padding: 6px 12px;
+    background: #c0c0c0;
+    border-top: 1px solid #808080;
+    padding: 4px 8px;
     font-size: 12px;
     font-weight: 600;
     color: black;
@@ -236,20 +209,17 @@
   }
 
   .text-muted-foreground {
-    color: #333 !important;
+    color: #404040 !important;
   }
 
-  /* Global font application */
   *, *::before, *::after {
     font-family: 'Amiri Quran', serif !important;
     font-weight: 600 !important;
   }
 
   .map-container {
-    background: #f5f5dc;
-    border: 2px solid #8b4513;
-    border-radius: 8px;
+    background: white;
+    border: 2px inset #c0c0c0;
     overflow: hidden;
-    box-shadow: 3px 3px 8px rgba(139, 69, 19, 0.3);
   }
 }

@@ -6,7 +6,7 @@ import { MapPin, Navigation, Radar, Route } from 'lucide-react';
 
 const SmartMap = () => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [map, setMap] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
 
@@ -47,14 +47,7 @@ const SmartMap = () => {
       const initialMap = new window.google.maps.Map(mapRef.current, {
         center: { lat: 35.6892, lng: 51.3890 }, // Tehran coordinates
         zoom: 10,
-        mapTypeId: window.google.maps.MapTypeId.ROADMAP,
-        styles: [
-          {
-            featureType: "all",
-            elementType: "geometry",
-            stylers: [{ color: "#f5f5dc" }]
-          }
-        ]
+        mapTypeId: window.google.maps.MapTypeId.ROADMAP
       });
 
       setMap(initialMap);
@@ -81,15 +74,7 @@ const SmartMap = () => {
           new window.google!.maps.Marker({
             position: location,
             map: map,
-            title: 'موقعیت شما',
-            icon: {
-              url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="red">
-                  <circle cx="12" cy="12" r="8"/>
-                </svg>
-              `),
-              scaledSize: new window.google!.maps.Size(24, 24)
-            }
+            title: 'موقعیت شما'
           });
 
           map.setCenter(location);
@@ -121,7 +106,7 @@ const SmartMap = () => {
       origin: userLocation,
       destination: destination,
       travelMode: window.google.maps.TravelMode.DRIVING
-    }, (result, status) => {
+    }, (result: any, status: string) => {
       if (status === 'OK' && result) {
         directionsRenderer.setDirections(result);
         console.log('مسیر محاسبه شد:', result);
@@ -145,21 +130,10 @@ const SmartMap = () => {
 
     detectionPoints.forEach((point, index) => {
       setTimeout(() => {
-        const color = point.type === 'suspicious' ? 'red' : 
-                     point.type === 'normal' ? 'yellow' : 'green';
-        
         new window.google!.maps.Marker({
           position: { lat: point.lat, lng: point.lng },
           map: map,
-          title: `نقطه تشخیص ${index + 1}`,
-          icon: {
-            url: `data:image/svg+xml;charset=UTF-8,` + encodeURIComponent(`
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="${color}">
-                <circle cx="10" cy="10" r="8" stroke="black" stroke-width="1"/>
-              </svg>
-            `),
-            scaledSize: new window.google!.maps.Size(20, 20)
-          }
+          title: `نقطه تشخیص ${index + 1}`
         });
         
         console.log(`نقطه تشخیص ${index + 1} اضافه شد:`, point);
@@ -216,7 +190,7 @@ const SmartMap = () => {
             <CardContent>
               <div 
                 ref={mapRef}
-                className="w-full h-96 bg-gray-100 border-2 border-gray-300 rounded-lg"
+                className="w-full h-96 bg-white border-2 border-gray-400"
                 style={{ minHeight: '400px' }}
               >
                 {!isLoaded && (
